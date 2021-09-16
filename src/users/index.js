@@ -3,11 +3,10 @@ const express = require('express')
 const createUser = require('./handlers/createUser')
 const getUser = require('./handlers/getUser')
 
-const usersRoute = express.Router({
-   // TODO: add any options
-})
+const parseJson = express.json()
+const usersRoute = express.Router()
 
-usersRoute.post('/users', createUser)
-usersRoute.get('/users', getUser)
+usersRoute.post('/users', parseJson, createUser)
+usersRoute.get('/users', parseJson, getUser)
 
 module.exports = filesRoute
