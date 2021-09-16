@@ -9,4 +9,4 @@ const usersRoute = express.Router()
 usersRoute.post('/users', parseJson, createUser)
 usersRoute.get('/users', parseJson, getUser)
 
-module.exports = filesRoute
+module.exports = usersRoute
