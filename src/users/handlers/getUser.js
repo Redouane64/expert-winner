@@ -1,4 +1,4 @@
 
 module.exports = (request, response) => {
-    return response.send({ ok: true })
+    return response.status(200).send(request.user)
 }
