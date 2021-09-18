@@ -13,16 +13,24 @@ module.exports = async (request, response) => {
         return response.status(400).send({ error: 'invalid filename' })
     }
 
-    const metadata = await redisClient.get(metadataKey)
-    const { file } = JSON.parse(metadata)
-
-    const raw = await redisClient.get(file)
-
-    if (!raw) {
-        return response.status(404).send({ error: 'no such file' })
+    try {
+        const metadata = await redisClient.get(metadataKey)
+        if (!metadata) {
+            return response.status(404).send({ error: 'no such file' })
+        }
+    
+        const { file } = JSON.parse(metadata)
+    
+        const raw = await redisClient.get(file)
+    
+        if (!raw) {
+            return response.status(404).send({ error: 'no such file' })
+        }
+    
+        return response.status(200)
+                       .contentType('image/png')
+                       .end(Buffer.from(raw, 'base64'), 'binary')
+    } catch (error) {
+        return response.status(500).send({ error: 'something went wrong :('})
     }
-
-    return response.status(200)
-                   .contentType('image/png')
-                   .end(Buffer.from(raw, 'base64'), 'binary')
 }
