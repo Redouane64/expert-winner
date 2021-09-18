@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+const redisClient = require('./redis.js')
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const accessTokenLifeTime = Number(process.env.ACCESS_TOKEN_LIFETIME)
