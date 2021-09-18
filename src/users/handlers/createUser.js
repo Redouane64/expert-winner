@@ -1,4 +1,4 @@
-const { createToken, redisClient } = require('../../common')
+const { createToken, redisClient, http } = require('../../common')
 /**
  * create user
  * @param {import("express").Request} request 
@@ -11,7 +11,7 @@ module.exports = async (request, response) => {
     const { username } = request.body
 
     if (!username) {
-        return response.status(400).send({ error: 'invalid username' })
+        return http.BAD_REQUST_RESPONSE(response, { error: 'invalid username' })
     }
 
     try {
@@ -20,12 +20,12 @@ module.exports = async (request, response) => {
             EX: expiresIn
         })
 
-        return response.status(201).send({
+        return http.OK_RESPONSE(response, {
             accessToken: token,
             expiresIn: Date.now() + expiresIn * 1000
         })
     } catch (error) {
-        return response.status(500).send({ error: 'something went wrong :(' })
+        return http.SERVER_ERROR_RESPONSE(response, { error: 'something went wrong :(' })
     }
 
 }

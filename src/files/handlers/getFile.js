@@ -1,4 +1,4 @@
-const { redisClient } = require("../../common")
+const { redisClient, http } = require("../../common")
 
 /**
  * create user
@@ -10,13 +10,13 @@ module.exports = async (request, response) => {
     const metadataKey  =request.params.filename
 
     if (!metadataKey) {
-        return response.status(400).send({ error: 'invalid filename' })
+        return http.BAD_REQUST_RESPONSE(response, { error: 'invalid filename' })
     }
 
     try {
         const metadata = await redisClient.get(metadataKey)
         if (!metadata) {
-            return response.status(404).send({ error: 'no such file' })
+            return http.NOT_FOUND_RESPONSE(response, { error: 'no such file' })
         }
     
         const { file } = JSON.parse(metadata)
@@ -24,13 +24,11 @@ module.exports = async (request, response) => {
         const raw = await redisClient.get(file)
     
         if (!raw) {
-            return response.status(404).send({ error: 'no such file' })
+            return http.NOT_FOUND_RESPONSE(response, { error: 'no such file' })
         }
-    
-        return response.status(200)
-                       .contentType('image/png')
-                       .end(Buffer.from(raw, 'base64'), 'binary')
+
+        return http.OK_FILE_RESPONSE(response, raw)
     } catch (error) {
-        return response.status(500).send({ error: 'something went wrong :('})
+        return http.SERVER_ERROR_RESPONSE(response, { error: 'something went wrong :('})
     }
 }

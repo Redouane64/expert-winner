@@ -27,3 +27,10 @@ app.get('*', (_, response) => response.send({ ok: true }))
 app.listen(PORT, HOST, () => {
     console.info(`Server running at ${HOST}:${PORT}`)
 })
+
+// terminate the process on promise rejections
+// express do not handle promise reject natively
+process.on('unhandledRejection', (error, promise) => {
+    console.error(error)
+    process.exit(1)
+})

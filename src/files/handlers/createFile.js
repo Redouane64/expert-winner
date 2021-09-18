@@ -1,5 +1,5 @@
 const { randomUUID } = require('crypto')
-const { redisClient } = require("../../common")
+const { redisClient, http } = require("../../common")
 
 /**
  * create user
@@ -12,7 +12,7 @@ module.exports = async (request, response) => {
     const { file } = request
 
     if (!file) {
-        return response.status(400).send({ error: 'file is missing'})
+        return http.BAD_REQUST_RESPONSE(response, { error: 'file is missing'})
     }
 
     try {
@@ -27,10 +27,10 @@ module.exports = async (request, response) => {
         
         /* response.header('Location', file-path) */
 
-        return response.status(201).send({
+        return http.CREATED_RESPONSE(response, {
             filename: fileMetadataKey
         })
     } catch(error) {
-        return response.status(500).send({ error: 'something went wrong :('})
+        return http.SERVER_ERROR_RESPONSE(response, { error: 'something went wrong :('})
     }
 }

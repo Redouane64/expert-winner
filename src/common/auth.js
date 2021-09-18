@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const redisClient = require('./redis.js')
+const http = require('./http')
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const accessTokenLifeTime = Number(process.env.ACCESS_TOKEN_LIFETIME)
@@ -19,7 +20,7 @@ const authorize = async (request, response, next) => {
     const { authorization = null } = request.headers
 
     if (authorization === null) {
-        return response.status(401).send({ error: 'unauthorized access' })
+        return http.UNAUTHORIZED_RESPONSE(response, { error: 'unauthorized access' })
     }
 
     /* Authorize: bearer XXX */
@@ -30,17 +31,17 @@ const authorize = async (request, response, next) => {
             ignoreExpiration: false
         })
     } catch(error) {
-        return response.status(401).send({ error: 'unauthorized access' })
+        return http.UNAUTHORIZED_RESPONSE(response, { error: 'unauthorized access' })
     }
 
     if (!payload) {
-        return response.status(401).send({ error: 'unauthorized access' })
+        return http.UNAUTHORIZED_RESPONSE(response, { error: 'unauthorized access' })
     }
 
     const data = await redisClient.get(token);
     
     if (!data) {
-        return response.status(401).send({ error: 'unauthorized access' })
+        return http.UNAUTHORIZED_RESPONSE(response, { error: 'unauthorized access' })
     }
 
     const user = JSON.parse(data)
