@@ -1,0 +1,31 @@
+version: '3.9'
+
+volumes: 
+  expert_winner:
+
+services:
+  app:
+    container_name: expert_winner
+    build: .
+    env_file: 
+      - .env
+    environment: 
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - REDIS_HOST=redis
+    ports:
+      - ${PORT}:${PORT}
+    volumes: 
+      - expert_winner
+    command: npm run start
+    depends_on:
+      - redis
+
+  redis:
+    container_name: expert_winner_redis
+    image: "redis:latest"
+    ports: 
+      - 6379:6379
+    volumes: 
+      - expert_winner
+    
